@@ -7,7 +7,6 @@ package resolve
 import (
 	"errors"
 	"net"
-	"time"
 )
 
 var (
@@ -29,7 +28,7 @@ func parseNetwork(netw string) (afnet string, proto int, err error) {
 }
 
 // ResolveAddr resolves addr that is either an Internet or Unix Addr
-func ResolveAddr(op, netw, addr string, deadline time.Time) (net.Addr, error) {
+func ResolveAddr(op, netw, addr string) (net.Addr, error) {
 	afnet, _, err := parseNetwork(netw)
 	if err != nil {
 		return nil, err
@@ -41,7 +40,7 @@ func ResolveAddr(op, netw, addr string, deadline time.Time) (net.Addr, error) {
 	case "unix", "unixgram", "unixpacket":
 		return net.ResolveUnixAddr(afnet, addr)
 	}
-	return ResolveInternetAddr(afnet, addr, deadline)
+	return ResolveInternetAddr(afnet, addr)
 }
 
 // resolveInternetAddr resolves addr that is either a literal IP
@@ -50,7 +49,7 @@ func ResolveAddr(op, netw, addr string, deadline time.Time) (net.Addr, error) {
 // address family addresses when addr is a DNS name and the name has
 // multiple address family records. The result contains at least one
 // address when error is nil.
-func ResolveInternetAddr(netw, addr string, deadline time.Time) (net.Addr, error) {
+func ResolveInternetAddr(netw, addr string) (net.Addr, error) {
 	var (
 		err              error
 		host, port, zone string
